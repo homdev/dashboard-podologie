@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { ArrowRight, Calendar, ClipboardCheck, FileText, LucideIcon, Menu, Users, X } from "lucide-react"
+import { ArrowRight, Calendar, ClipboardCheck, FileText, LucideIcon, Menu, Users } from "lucide-react"
 
 export function HomePageComponent() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -60,7 +60,7 @@ export function HomePageComponent() {
                   Révolutionnez votre pratique podologique
                 </h1>
                 <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400 text-sm sm:text-base">
-                  PodoScan Pro : L'outil ultime pour le diagnostic et le suivi podologique de précision.
+                  PodoScan Pro : Outil ultime pour le diagnostic et le suivi podologique de précision.
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
@@ -111,7 +111,7 @@ export function HomePageComponent() {
           </p>
           <nav className="flex gap-4 sm:gap-6">
             <a className="text-xs hover:underline underline-offset-4" href="#">
-              Conditions d'utilisation
+              Conditions utilisation
             </a>
             <a className="text-xs hover:underline underline-offset-4" href="#">
               Politique de confidentialité
