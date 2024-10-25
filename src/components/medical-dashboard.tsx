@@ -43,7 +43,7 @@ export function MedicalDashboard() {
     formData.append('file', file)
 
     try {
-      const res = await fetch('http://192.168.1.174:5000/upload', {
+      const res = await fetch('https://671be00c81a5f4a93bd4891e--dashboard-podologie.netlify.app/upload', {
         method: 'POST',
         body: formData,
       })
