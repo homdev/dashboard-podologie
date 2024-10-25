@@ -1,4 +1,5 @@
-import NextAuth, { NextAuthOptions, User, Session, JWT } from "next-auth"
+import NextAuth, { NextAuthOptions, User, Session } from "next-auth"
+import { JWT } from "next-auth/jwt"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import CredentialsProvider from "next-auth/providers/credentials"
 import prisma from "@/lib/prisma"
