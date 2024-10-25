@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useSession } from 'next-auth/react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
@@ -8,6 +9,8 @@ import { ArrowRight, Calendar, ClipboardCheck, FileText, Link, LucideIcon, Menu,
 
 export function HomePageComponent() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { data: session } = useSession()
+
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -35,9 +38,15 @@ export function HomePageComponent() {
               <a href="#" className="text-lg font-semibold hover:underline">Fonctionnalités</a>
               <a href="#" className="text-lg font-semibold hover:underline">Tarifs</a>
               <a href="#" className="text-lg font-semibold hover:underline">Contact</a>
-              <Button asChild className="mt-4">
-                <Link href="/auth">Se connecter</Link>
-              </Button>
+              {session ? (
+                <Button asChild className="mt-4">
+                  <Link href="/dashboard">Dashboard</Link>
+                </Button>
+              ) : (
+                <Button asChild className="mt-4">
+                  <Link href="/auth">Se connecter</Link>
+                </Button>
+              )}
             </nav>
           </SheetContent>
         </Sheet>
@@ -66,9 +75,15 @@ export function HomePageComponent() {
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="w-full sm:w-auto">
+              {session ? (
+                <Button asChild>
+                  <Link href="/dashboard">Dashboard</Link>
+                </Button>
+              ) : (
+                <Button asChild>
                   <Link href="/auth">Se connecter</Link>
                 </Button>
+              )}
                 <Button variant="outline" size="lg" className="w-full sm:w-auto">
                   En savoir plus <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
