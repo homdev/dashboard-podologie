@@ -1,30 +1,21 @@
 'use client'
 
 import React, { useState, useCallback } from 'react'
-import { Upload, Image as ImageIcon, Download, Printer, Menu, LogOut, User } from 'lucide-react'
+import { Upload, Image as ImageIcon, Download, Printer } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import Link from 'next/link'
-import { Home, Settings, HelpCircle } from 'lucide-react'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { useSession, signOut } from 'next-auth/react'
+
 export function MedicalDashboard() {
-  const { data: session } = useSession()
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [processedImage, setProcessedImage] = useState<string | null>(null)
   const [leftFootImage, setLeftFootImage] = useState<string | null>(null)
   const [rightFootImage, setRightFootImage] = useState<string | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [displayOption, setDisplayOption] = useState('both')
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
-  const handleSignOut = () => {
-    signOut({ callbackUrl: '/' })
-  }
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -199,10 +190,6 @@ export function MedicalDashboard() {
      }
    };
  
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen)
-  }
 
   return (
     <div className="flex h-screen bg-gray-100">
