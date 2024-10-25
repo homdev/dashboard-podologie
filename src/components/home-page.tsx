@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { ArrowRight, Calendar, ClipboardCheck, FileText, LucideIcon, Menu, Users } from "lucide-react"
+import { ArrowRight, Calendar, ClipboardCheck, FileText, Link, LucideIcon, Menu, Users } from "lucide-react"
 
 export function HomePageComponent() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -35,7 +35,9 @@ export function HomePageComponent() {
               <a href="#" className="text-lg font-semibold hover:underline">Fonctionnalités</a>
               <a href="#" className="text-lg font-semibold hover:underline">Tarifs</a>
               <a href="#" className="text-lg font-semibold hover:underline">Contact</a>
-              <Button className="mt-4">Se connecter</Button>
+              <Button asChild className="mt-4">
+                <Link href="/auth">Se connecter</Link>
+              </Button>
             </nav>
           </SheetContent>
         </Sheet>
@@ -65,7 +67,7 @@ export function HomePageComponent() {
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button size="lg" className="w-full sm:w-auto">
-                  Se connecter
+                  <Link href="/auth">Se connecter</Link>
                 </Button>
                 <Button variant="outline" size="lg" className="w-full sm:w-auto">
                   En savoir plus <ArrowRight className="ml-2 h-4 w-4" />
