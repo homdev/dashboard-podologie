@@ -1,8 +1,7 @@
-import NextAuth, { NextAuthOptions, User } from "next-auth"
+import NextAuth, { NextAuthOptions } from "next-auth"
 import { JWT } from "next-auth/jwt"
-import { Session } from "next-auth"
-import { PrismaAdapter } from "@auth/prisma-adapter"
 import CredentialsProvider from "next-auth/providers/credentials"
+import { PrismaAdapter } from "@auth/prisma-adapter"
 import prisma from "@/lib/prisma"
 import bcrypt from "bcrypt"
 
@@ -44,15 +43,15 @@ const authOptions: NextAuthOptions = {
     signIn: "/auth",
   },
   callbacks: {
-    async jwt({ token, user }: { token: JWT, user?: User }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id
       }
       return token
     },
-    async session({ session, token }: { session: Session, token: JWT & { id?: string } }) {
-      if (session.user && token.id) {
-        session.user.id = token.id
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string
       }
       return session
     }
