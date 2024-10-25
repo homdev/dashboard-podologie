@@ -1,6 +1,8 @@
 "use client"
 
 import { useState } from "react"
+import { signIn } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,8 +13,61 @@ import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, UserIcon } from "lucide-react"
 export function AuthPageComponent() {
   const [showPassword, setShowPassword] = useState(false)
   const [activeTab, setActiveTab] = useState("login")
+  const [error, setError] = useState("")
+  const router = useRouter()
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword)
+
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setError("")
+    const formData = new FormData(e.currentTarget)
+    const email = formData.get("email") as string
+    const password = formData.get("password") as string
+
+    const result = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    })
+
+    if (result?.error) {
+      setError("Identifiants incorrects. Veuillez réessayer.")
+    } else {
+      router.push("/dashboard")
+    }
+  }
+
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setError("")
+    const formData = new FormData(e.currentTarget)
+    const name = formData.get("name") as string
+    const email = formData.get("email") as string
+    const password = formData.get("password") as string
+  
+    const response = await fetch("/api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    })
+  
+    if (response.ok) {
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      })
+      if (result?.error) {
+        setError("Erreur lors de la connexion automatique. Veuillez vous connecter manuellement.")
+      } else {
+        router.push("/dashboard")
+      }
+    } else {
+      const data = await response.json()
+      setError(data.message || "Erreur lors de l\'inscription. Veuillez réessayer.")
+    }
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 px-4 py-8">
@@ -24,19 +79,20 @@ export function AuthPageComponent() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-4">
               <TabsTrigger value="login">Connexion</TabsTrigger>
               <TabsTrigger value="register">Inscription</TabsTrigger>
             </TabsList>
             <TabsContent value="login">
-              <form>
+              <form onSubmit={handleLogin}>
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="email-login">Email</Label>
                     <div className="relative">
                       <MailIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
-                      <Input id="email-login" type="email" placeholder="nom@exemple.com" className="pl-10" required />
+                      <Input id="email-login" name="email" type="email" placeholder="nom@exemple.com" className="pl-10" required />
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -45,6 +101,7 @@ export function AuthPageComponent() {
                       <LockIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
                       <Input
                         id="password-login"
+                        name="password"
                         type={showPassword ? "text" : "password"}
                         className="pl-10 pr-10"
                         required
@@ -74,20 +131,20 @@ export function AuthPageComponent() {
               </form>
             </TabsContent>
             <TabsContent value="register">
-              <form>
+              <form onSubmit={handleRegister}>
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="name-register">Nom complet</Label>
                     <div className="relative">
                       <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
-                      <Input id="name-register" type="text" placeholder="John Doe" className="pl-10" required />
+                      <Input id="name-register" name="name" type="text" placeholder="John Doe" className="pl-10" required />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email-register">Email</Label>
                     <div className="relative">
                       <MailIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
-                      <Input id="email-register" type="email" placeholder="nom@exemple.com" className="pl-10" required />
+                      <Input id="email-register" name="email" type="email" placeholder="nom@exemple.com" className="pl-10" required />
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -96,6 +153,7 @@ export function AuthPageComponent() {
                       <LockIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
                       <Input
                         id="password-register"
+                        name="password"
                         type={showPassword ? "text" : "password"}
                         className="pl-10 pr-10"
                         required
@@ -120,7 +178,7 @@ export function AuthPageComponent() {
                   </div>
                 </div>
                 <Button className="w-full mt-6" type="submit">
-                  S'inscrire
+                  Inscription
                 </Button>
               </form>
             </TabsContent>
@@ -130,7 +188,7 @@ export function AuthPageComponent() {
           <div className="text-sm text-gray-500 text-center">
             En vous connectant, vous acceptez nos{" "}
             <a href="#" className="underline hover:text-primary">
-              conditions d'utilisation
+              conditions utilisation
             </a>{" "}
             et notre{" "}
             <a href="#" className="underline hover:text-primary">

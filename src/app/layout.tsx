@@ -1,12 +1,10 @@
+'use client';
+
 import './globals.css'
 import { Inter } from 'next/font/google'
+import { SessionProvider } from "next-auth/react"
 
 const inter = Inter({ subsets: ['latin'] })
-
-export const metadata = {
-  title: 'Votre titre',
-  description: 'Votre description',
-}
 
 export default function RootLayout({
   children,
@@ -16,9 +14,11 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className={`${inter.className} flex justify-center min-h-screen`}>
-        <div className="w-full max-w-7xl">
-          {children}
-        </div>
+        <SessionProvider>
+          <div className="w-full">
+            {children}
+          </div>
+        </SessionProvider>
       </body>
     </html>
   )
