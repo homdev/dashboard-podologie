@@ -1,23 +1,62 @@
-'use client';
+import NextAuth, { NextAuthOptions, User } from "next-auth"
+import { JWT } from "next-auth/jwt"
+import { Session } from "next-auth"
+import { PrismaAdapter } from "@auth/prisma-adapter"
+import CredentialsProvider from "next-auth/providers/credentials"
+import prisma from "@/lib/prisma"
+import bcrypt from "bcrypt"
 
-import { AuthPageComponent } from "@/components/auth-page"
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import { useEffect } from "react"
-
-export default function AuthPage() {
-  const { data: session, status } = useSession()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.push("/dashboard")
+export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
+  providers: [
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Mot de passe", type: "password" }
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          return null
+        }
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email }
+        })
+        if (!user || !user.password) {
+          return null
+        }
+        const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
+        if (!isPasswordValid) {
+          return null
+        }
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+        }
+      }
+    })
+  ],
+  session: {
+    strategy: "jwt"
+  },
+  pages: {
+    signIn: "/auth",
+  },
+  callbacks: {
+    async jwt({ token, user }: { token: JWT, user?: User }) {
+      if (user) {
+        token.id = user.id
+      }
+      return token
+    },
+    async session({ session, token }: { session: Session, token: JWT & { id?: string } }) {
+      if (session.user && token.id) {
+        session.user.id = token.id
+      }
+      return session
     }
-  }, [status, router])
-
-  if (status === "loading") {
-    return <div>Chargement...</div>
   }
-
-  return <AuthPageComponent />
 }
+
+export default NextAuth(authOptions)
