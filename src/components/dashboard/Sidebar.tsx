@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Settings, HelpCircle, Menu } from 'lucide-react'
+import { Home, Settings, HelpCircle, ChevronRight, ChevronLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface SidebarProps {
@@ -21,25 +21,18 @@ export function Sidebar({ isSidebarOpen, toggleSidebar }: SidebarProps) {
   ]
 
   return (
-    <>
-      <Button
-        onClick={toggleSidebar}
-        variant="outline"
-        size="icon"
-        className="fixed top-4 left-4 z-50 lg:hidden"
-      >
-        <Menu className="h-4 w-4" />
-        <span className="sr-only">Toggle Sidebar</span>
-      </Button>
-
+    <div className="relative">
       <aside
-        className={`${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-md transition-transform duration-300 ease-in-out lg:translate-x-0`}
+        className={`
+          fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-md 
+          transition-transform duration-300 ease-in-out
+          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-[calc(100%)]'}
+          lg:translate-x-0
+        `}
       >
-        <div className="p-4">
+        <div className="p-4 h-full flex flex-col">
           <h2 className="text-2xl font-bold mb-4">Menu</h2>
-          <nav>
+          <nav className="flex-grow">
             <ul className="space-y-2">
               {navItems.map((item) => (
                 <li key={item.href}>
@@ -56,8 +49,17 @@ export function Sidebar({ isSidebarOpen, toggleSidebar }: SidebarProps) {
               ))}
             </ul>
           </nav>
+          <Button
+            onClick={toggleSidebar}
+            variant="outline"
+            size="icon"
+            className="absolute bottom-4 -right-10 lg:hidden"
+          >
+            {isSidebarOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+            <span className="sr-only">Toggle Sidebar</span>
+          </Button>
         </div>
       </aside>
-    </>
+    </div>
   )
 }

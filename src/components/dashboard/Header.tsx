@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { useSession, signOut } from "next-auth/react"
-import { Menu, User, LogOut } from 'lucide-react'
+import { User, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -12,11 +12,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-interface HeaderProps {
-  toggleSidebar: () => void
-}
 
-export function Header({ toggleSidebar }: HeaderProps) {
+export function Header() {
   const { data: session } = useSession()
 
   const handleSignOut = () => {
@@ -28,10 +25,6 @@ export function Header({ toggleSidebar }: HeaderProps) {
       <div className=" mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center">
-            <Button onClick={toggleSidebar} variant="outline" size="icon" className="mr-4 lg:hidden">
-              <Menu className="h-4 w-4" />
-              <span className="sr-only">Toggle Sidebar</span>
-            </Button>
             <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
           </div>
           

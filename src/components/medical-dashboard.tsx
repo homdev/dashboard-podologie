@@ -87,7 +87,7 @@ export function MedicalDashboard() {
         return processedImage ? (
           <img src={processedImage} alt="Image traitée" className="w-full h-64 object-contain" />
         ) : (
-          <div className="h-64 w-full bg-gray-200 flex items-center justify-center text-gray-500">
+          <div className="h-64 w-full object-contain bg-gray-200 flex items-center justify-center text-gray-500">
             <ImageIcon className="h-12 w-12" />
           </div>
         )
