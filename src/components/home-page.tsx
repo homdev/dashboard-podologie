@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { ArrowRight, Calendar, ClipboardCheck, FileText, LucideIcon, Menu, Users } from "lucide-react"
+import { Calendar, ClipboardCheck, FileText, LucideIcon, Menu, Users } from "lucide-react"
 import Link from 'next/link'
 
 export function HomePageComponent() {
