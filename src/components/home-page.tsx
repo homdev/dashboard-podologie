@@ -1,16 +1,44 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { ArrowRight, Calendar, ClipboardCheck, FileText, Link, LucideIcon, Menu, Users } from "lucide-react"
+import { ArrowRight, Calendar, ClipboardCheck, FileText, LucideIcon, Menu, Users } from "lucide-react"
+import Link from 'next/link'
 
 export function HomePageComponent() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
+  const [mounted, setMounted] = useState(false)
 
+
+  useEffect(() => {
+    setMounted(true) 
+  }, [])
+
+  if (!mounted) {
+    return null // ou un composant de chargement
+  }
+
+  const AuthButton = () => {
+    if (status === "loading") {
+      return <Button disabled>Chargement...</Button>
+    }
+    if (session) {
+      return (
+        <Button asChild>
+          <Link href="/dashboard">Dashboard</Link>
+        </Button>
+      )
+    }
+    return (
+      <Button asChild>
+        <Link href="/auth">Se connecter</Link>
+      </Button>
+    )
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -35,18 +63,10 @@ export function HomePageComponent() {
           </SheetTrigger>
           <SheetContent side="right" className="w-[300px] sm:w-[400px]">
             <nav className="flex flex-col gap-4">
-              <a href="#" className="text-lg font-semibold hover:underline">Fonctionnalités</a>
-              <a href="#" className="text-lg font-semibold hover:underline">Tarifs</a>
-              <a href="#" className="text-lg font-semibold hover:underline">Contact</a>
-              {session ? (
-                <Button asChild className="mt-4">
-                  <Link href="/dashboard">Dashboard</Link>
-                </Button>
-              ) : (
-                <Button asChild className="mt-4">
-                  <Link href="/auth">Se connecter</Link>
-                </Button>
-              )}
+              <Link href="#" className="text-lg font-semibold hover:underline">Fonctionnalités</Link>
+              <Link href="#" className="text-lg font-semibold hover:underline">Tarifs</Link>
+              <Link href="#" className="text-lg font-semibold hover:underline">Contact</Link>
+              <AuthButton />
             </nav>
           </SheetContent>
         </Sheet>
@@ -75,18 +95,7 @@ export function HomePageComponent() {
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
-              {session ? (
-                <Button asChild>
-                  <Link href="/dashboard">Dashboard</Link>
-                </Button>
-              ) : (
-                <Button asChild>
-                  <Link href="/auth">Se connecter</Link>
-                </Button>
-              )}
-                <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                  En savoir plus <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+              <AuthButton />
               </div>
             </div>
           </div>

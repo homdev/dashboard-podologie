@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useCallback } from 'react'
-import { Upload, Image as ImageIcon, Download, Printer, Menu } from 'lucide-react'
+import { Upload, Image as ImageIcon, Download, Printer, Menu, LogOut, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -9,8 +9,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import Link from 'next/link'
 import { Home, Settings, HelpCircle } from 'lucide-react'
-
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { useSession, signOut } from 'next-auth/react'
 export function MedicalDashboard() {
+  const { data: session } = useSession()
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [processedImage, setProcessedImage] = useState<string | null>(null)
   const [leftFootImage, setLeftFootImage] = useState<string | null>(null)
@@ -18,6 +21,10 @@ export function MedicalDashboard() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [displayOption, setDisplayOption] = useState('both')
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+
+  const handleSignOut = () => {
+    signOut({ callbackUrl: '/' })
+  }
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -70,16 +77,16 @@ export function MedicalDashboard() {
   const renderProcessedImage = () => {
     switch (displayOption) {
       case 'left':
-        return leftFootImage ? (
-          <img src={leftFootImage} alt="Pied gauche" className="w-full h-64 object-contain" />
+        return rightFootImage ? (
+          <img src={rightFootImage} alt="Pied gauche" className="w-full h-64 object-contain" />
         ) : (
           <div className="h-64 bg-gray-200 flex items-center justify-center text-gray-500">
             Pied gauche non disponible
           </div>
         )
       case 'right':
-        return rightFootImage ? (
-          <img src={rightFootImage} alt="Pied droit" className="w-full h-64 object-contain" />
+        return leftFootImage ? (
+          <img src={leftFootImage} alt="Pied droit" className="w-full h-64 object-contain" />
         ) : (
           <div className="h-64 bg-gray-200 flex items-center justify-center text-gray-500">
             Pied droit non disponible
@@ -89,7 +96,7 @@ export function MedicalDashboard() {
         return processedImage ? (
           <img src={processedImage} alt="Image traitée" className="w-full h-64 object-contain" />
         ) : (
-          <div className="h-64 bg-gray-200 flex items-center justify-center text-gray-500">
+          <div className="h-64 w-full bg-gray-200 flex items-center justify-center text-gray-500">
             <ImageIcon className="h-12 w-12" />
           </div>
         )
@@ -199,43 +206,8 @@ export function MedicalDashboard() {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-md transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0`}>
-        <div className="p-4">
-          <h2 className="text-2xl font-bold mb-4">Menu</h2>
-          <nav>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/dashboard" className="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100">
-                  <Home className="mr-2 h-4 w-4" />
-                  Accueil
-                </Link>
-              </li>
-              <li>
-                <Link href="/settings" className="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100">
-                  <Settings className="mr-2 h-4 w-4" />
-                  Paramètres
-                </Link>
-              </li>
-              <li>
-                <Link href="/help" className="flex items-center p-2 text-gray-700 rounded hover:bg-gray-100">
-                  <HelpCircle className="mr-2 h-4 w-4" />
-                  Aide
-                </Link>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </aside>
-
       {/* Main content */}
       <main className="flex-1 p-4 lg:p-8 overflow-auto">
-        <div className="mb-4">
-          <Button onClick={toggleSidebar} variant="outline" size="icon" className="lg:hidden">
-            <Menu className="h-4 w-4" />
-            <span className="sr-only">Toggle Sidebar</span>
-          </Button>
-        </div>
         <Card>
           <CardHeader>
             <CardTitle>Traitement Image</CardTitle>
@@ -283,59 +255,59 @@ export function MedicalDashboard() {
               </div>
 
               {/* Image display areas */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Image originale</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {selectedImage ? (
-                      <img src={selectedImage} alt="Original" className="w-full h-64 object-contain" />
-                    ) : (
-                      <div className="h-64 bg-gray-200 flex items-center justify-center text-gray-500">
-                        Aucune image uploadée
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Image traitée</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {isProcessing ? (
-                      <div className="h-64 bg-gray-200 flex items-center justify-center text-gray-500">
-                        Traitement en cours...
-                      </div>
-                    ) : (
-                      renderProcessedImage()
-                    )}
-                  </CardContent>
-                </Card>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                 <Card className="h-[400px]">
+                   <CardHeader>
+                     <CardTitle>Image originale</CardTitle>
+                   </CardHeader>
+                   <CardContent className="h-[calc(100%-4rem)] flex items-center justify-center">
+                     {selectedImage ? (
+                       <img src={selectedImage} alt="Original" className="max-w-full max-h-full object-contain" />
+                     ) : (
+                       <div className="w-full h-full flex items-center justify-center text-gray-500 bg-gray-200">
+                         Aucune image uploadée
+                       </div>
+                     )}
+                   </CardContent>
+                 </Card>
+                 <Card className="h-[400px]">
+                   <CardHeader>
+                     <CardTitle>Image traitée</CardTitle>
+                   </CardHeader>
+                   <CardContent className="h-[calc(100%-4rem)] flex items-center justify-center">
+                     {isProcessing ? (
+                       <div className="w-full h-full flex items-center justify-center text-gray-500 bg-gray-200">
+                         Traitement en cours...
+                       </div>
+                     ) : (
+                       renderProcessedImage()
+                     )}
+                   </CardContent>
+                 </Card>
+               </div>
                 {/* Boutons de téléchargement et d'impression */}
                 {(processedImage || leftFootImage || rightFootImage) && (
-                  <div className="col-span-2 flex justify-end space-x-2 mt-4">
+                  <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2 mt-4">
                     <Button
                       onClick={handleDownload}
-                      className="flex items-center space-x-2"
+                      className="flex items-center justify-center space-x-2 w-full sm:w-auto"
                     >
                       <Download className="h-4 w-4" />
-                      <span>Télécharger</span>
+                      <span className="text-sm">Télécharger</span>
                     </Button>
                     <Button
                       onClick={handlePrint}
-                      className="flex items-center space-x-2"
+                      className="flex items-center justify-center space-x-2 w-full sm:w-auto"
                     >
                       <Printer className="h-4 w-4" />
-                      <span>Imprimer en A4</span>
+                      <span className="text-sm">Imprimer en A4</span>
                     </Button>
                   </div>
                 )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </main>
-    </div>
+             </div>
+           </CardContent>
+         </Card>
+       </main>
+     </div>
   )
 }
